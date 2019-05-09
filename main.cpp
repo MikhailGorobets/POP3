@@ -108,8 +108,8 @@ int main(int argc, char* argv[]) {
 
 	system("chcp 1251");
 	
-    auto constexpr user     = "misha.friman@mail.ru";
-    auto constexpr password = "valovlox";
+    auto constexpr user     = "emal";
+    auto constexpr password = "password";
 
 	try {
 
