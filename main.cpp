@@ -27,8 +27,8 @@ namespace POP3 {
 
 	struct CommandUser final: public ICommand<CommandUser> {
 		CommandUser(std::string const& userName);
-	    auto ExecuteImpl(Session& session) const -> Response;
-	    std::string UserName;
+		auto ExecuteImpl(Session& session) const -> Response;
+		std::string UserName;
 	};
 
 	struct CommandPass final: public ICommand<CommandPass> {
@@ -106,13 +106,10 @@ namespace POP3 {
 
 int main(int argc, char* argv[]) {
 
-	system("chcp 1251");
-	
-    auto constexpr user     = "emal";
-    auto constexpr password = "password";
+	auto constexpr user     = "emal";
+	auto constexpr password = "password";
 
 	try {
-
 		POP3::Session session(HOST, PORT);
 		std::cout << "Execute CommandUser: " << session.ExecuteCommand(POP3::CommandUser(user));
 		std::cout << "Execute CommandPass: " << session.ExecuteCommand(POP3::CommandPass(password));
@@ -168,8 +165,6 @@ namespace POP3 {
 
 		if (Response response{ std::string(std::istreambuf_iterator<char>(&buffer), std::istreambuf_iterator<char>()) }; !response.Status())
 			throw std::runtime_error("Error: " + response.Error());
-
-
 	}
 
 
