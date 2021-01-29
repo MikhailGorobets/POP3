@@ -12,9 +12,6 @@
 constexpr auto HOST = "pop.mail.ru";
 constexpr auto PORT = "pop3s"; 
 
-
-
-
 namespace POP3 {
 
 	class Session;
@@ -100,10 +97,6 @@ namespace POP3 {
 }
 
 
-
-
-
-
 int main(int argc, char* argv[]) {
 
 	auto constexpr user     = "emal";
@@ -123,10 +116,6 @@ int main(int argc, char* argv[]) {
 	}
 
 }
-
-
-
-
 
 
 namespace POP3 {
