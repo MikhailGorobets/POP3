@@ -22,16 +22,14 @@ namespace POP3 {
 		auto Execute(Session& session) const -> Response;
 	};
 
-	struct CommandUser final: public ICommand<CommandUser> {
-		CommandUser(std::string const& userName);
+	struct CommandUser final: public ICommand<CommandUser> {		
 		auto ExecuteImpl(Session& session) const -> Response;
-		std::string UserName;
+		std::string UserName = {}
 	};
 
 	struct CommandPass final: public ICommand<CommandPass> {
-		CommandPass(std::string const& password);
 		auto ExecuteImpl(Session& session) const -> Response;
-		std::string Password;
+		std::string Password = {}
 	};
 
 	struct CommandStat final: public ICommand<CommandStat> {
@@ -39,8 +37,6 @@ namespace POP3 {
 	};
 
 	struct CommandList final: public ICommand<CommandList> {
-		CommandList() = default;
-		CommandList(uint64_t index);
 		auto ExecuteImpl(Session& session) const -> Response;
 		uint64_t Index = std::numeric_limits<uint64_t>::max();
 	};
@@ -50,9 +46,8 @@ namespace POP3 {
 	};
 
 	struct CommandDelete final: public ICommand<CommandDelete> {
-		CommandDelete(uint64_t index);
 		auto ExecuteImpl(Session& session) const -> Response;
-		uint64_t Index;
+		uint64_t Index = {}
 	};
 
 	struct CommandNoop final: public ICommand<CommandNoop> {
@@ -60,9 +55,8 @@ namespace POP3 {
 	};
 
 	struct CommandRetr final: public ICommand<CommandRetr> {
-		CommandRetr(uint64_t index);
 		auto ExecuteImpl(Session& session) const -> Response;
-		uint64_t Index;
+		uint64_t Index = {}
 	};
 
 	struct CommandReset final: public ICommand<CommandReset> {
@@ -75,14 +69,14 @@ namespace POP3 {
 		auto Status() const -> bool;
 		auto Error()  const -> std::string;
 	public:
-		std::string Data;
-	
+		std::string Data;	
 	};
 
 	class Session {		
 	public:
 		Session(std::string const& host, std::string const& port);
-		template<typename T> auto ExecuteCommand(ICommand<T> const & cmd) -> Response;
+		template<typename T>
+		auto ExecuteCommand(ICommand<T> const & cmd) -> Response;
 
 	public:
 		boost::asio::io_service                                IOService;
@@ -104,13 +98,12 @@ int main(int argc, char* argv[]) {
 
 	try {
 		POP3::Session session(HOST, PORT);
-		std::cout << "Execute CommandUser: " << session.ExecuteCommand(POP3::CommandUser(user));
-		std::cout << "Execute CommandPass: " << session.ExecuteCommand(POP3::CommandPass(password));
-		std::cout << "Execute CommandStat: " << session.ExecuteCommand(POP3::CommandStat());
-		std::cout << "Execute CommandList: " << session.ExecuteCommand(POP3::CommandList());
-		std::cout << "Execute CommandRetr: " << session.ExecuteCommand(POP3::CommandRetr(10));
-		std::cout << "Execute CommandQuit: " << session.ExecuteCommand(POP3::CommandQuit());
-
+		std::cout << "Execute CommandUser: " << session.ExecuteCommand(POP3::CommandUser{ user });
+		std::cout << "Execute CommandPass: " << session.ExecuteCommand(POP3::CommandPass{ password });
+		std::cout << "Execute CommandStat: " << session.ExecuteCommand(POP3::CommandStat{ });
+		std::cout << "Execute CommandList: " << session.ExecuteCommand(POP3::CommandList{ });
+		std::cout << "Execute CommandRetr: " << session.ExecuteCommand(POP3::CommandRetr{ 10 });
+		std::cout << "Execute CommandQuit: " << session.ExecuteCommand(POP3::CommandQuit{});
 	} catch (std::exception const& e) {
 		std::cerr << e.what();
 	}
@@ -200,16 +193,6 @@ namespace POP3 {
 	template<typename T>
 	auto ICommand<T>::Execute(Session& session) const -> Response { return static_cast<T const*>(this)->ExecuteImpl(session); };
 
-	CommandUser::CommandUser(std::string const& userName) : UserName{ userName } {}
-
-	CommandPass::CommandPass(std::string const& password) : Password{ password } {}
-
-	CommandList::CommandList(uint64_t index) : Index{ index } {}
-
-	CommandDelete::CommandDelete(uint64_t index) : Index{ index } {}
-
-	CommandRetr::CommandRetr(uint64_t index) : Index{ index } {}
-
 	auto CommandDelete::ExecuteImpl(Session & session) const -> Response {
 		return ExecuteCommand(session, std::string("DELE ") + std::to_string(Index) + std::string("\r\n"));
 	}
@@ -249,7 +232,6 @@ namespace POP3 {
 	template<typename T>
 	auto Session::ExecuteCommand(ICommand<T> const& cmd) -> Response {
 		return cmd.Execute(*this);
-
 	}
 
 }
