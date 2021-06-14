@@ -1,0 +1,3 @@
+[submodule "3rd-party/spirv-cross"]
+	path = 3rd-party/spirv-cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
